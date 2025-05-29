@@ -38,7 +38,7 @@ export class MyMCP extends McpAgent {
 			"Get social media links for MB Crosier.",
 			async () => ({
 				content: [
-					{ type: "text", text: JSON.stringify({ linkedin: "https://linkedin.com/in/maryboydcrosier", github: "https://github.com/mbcrosier", instagram: "https://instagram.com/maryboydc" }, null, 2) },
+					{ type: "text", text: JSON.stringify({ linkedin: "https://linkedin.com/in/maryboydcrosier", github: "https://github.com/mbcrosier", instagram: "https://instagram.com/maryboydc", twitter: "https://x.com/mb_crosier" }, null, 2) },
 				],
 			})
 		);
@@ -66,12 +66,12 @@ const landingPageHTML = `
     <ul>
         <li><code>get_bio</code>: Returns a paragraph biography of MB Crosier.</li>
         <li><code>get_contact_info</code>: Returns the contact email for MB Crosier (mbcrosier@gmail.com).</li>
-        <li><code>get_social_links</code>: Returns JSON with MB Crosier's Linkedin, Github, and Instagram accounts.</li>
+        <li><code>get_social_links</code>: Returns JSON with MB Crosier's Linkedin, Github, Instagram, and Twitter accounts.</li>
     </ul>
     <h2>Connecting Clients:</h2>
     <p>You can connect to this server using MCP-compatible clients like Cloudflare AI Playground, Claude Desktop, or Cursor.</p>
     <h3>Cloudflare AI Playground:</h3>
-    <p>Go to <a href="https://playground.ai.cloudflare.com/">https://playground.ai.cloudflare.com/</a> and enter your deployed server URL ending in <code>/sse</code>.</p>
+    <p>Go to <a href="https://playground.ai.cloudflare.com/">https://playground.ai.cloudflare.com/</a> and enter this page's URL.</p>
     <h3>Other Clients (Claude Desktop, Cursor):</h3>
     <p>Use the <code>mcp-remote</code> proxy. Configure your client with command <code>npx</code> and arguments <code>mcp-remote</code> and your server URL ending in <code>/sse</code> (or <code>http://localhost:8787/sse</code> for local development).</p>
 </body>
