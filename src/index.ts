@@ -82,17 +82,20 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
 
-		if (url.pathname === "/sse") {
-			// Check if request is likely from a browser expecting HTML
-			if (request.headers.get("Accept")?.includes("text/html")) {
+		// Handle requests to the /sse path or /sse/message path for MCP communication
+		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
+			// Check if the request to /sse is likely from a browser expecting HTML
+			if (url.pathname === "/sse" && request.headers.get("Accept")?.includes("text/html")) {
+				// Serve the HTML landing page for browsers on /sse
 				return new Response(landingPageHTML, { headers: { "Content-Type": "text/html" } });
 			} else {
-				// Not a browser, handle as an MCP request via SSE
+				// Handle as an MCP request via SSE for clients on /sse or /sse/message
+				// This assumes MyMCP.serveSSE handles both GET for /sse and POST for /sse/message
 				return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
 			}
 		}
 
-		// If not /sse, return 404
+		// Return 404 for any other path
 		return new Response("Not found", { status: 404 });
 	},
 };
