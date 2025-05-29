@@ -24,7 +24,7 @@ Update with this configuration:
 ```json
 {
   "mcpServers": {
-    "calculator": {
+    "mbcrosier-mcp": {
       "command": "npx",
       "args": [
         "mcp-remote",
