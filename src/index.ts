@@ -16,7 +16,7 @@ export class MyMCP extends McpAgent {
 			"Get a brief bio of MB Crosier.",
 			async () => ({
 				content: [
-					{ type: "text", text: "MB (\"Mary Boyd\") Crosier is currently a student in Harvard's MS/MBA: Engineering Sciences program. MB also writes a Substack newsletter called MCP in Context (https://www.mcpincontext.com) about all things related to the Model Context Protocol. Previously, she worked at marketing and operations roles at Stytch (a Series B developer tools startup), as a management consultant focused on tech due diligences at Bain & Co, and was a strategy intern at Codecademy, focused on curriculum development and community building. Before that, she studied Systems and Information Engineering at UVA, as a  Jefferson Scholar. Outside of work, MB enjoys running, doing crosswords, traveling, and scuba diving. She also loves learning about local history, and has been a volunteer historical tour guide at the University of Virginia, on Boston's Freedom Trail, and at New York's Merchant House Museum. To learn more about MB, visit her personal website at https://www.mbcrosier.com." },
+					{ type: "text", text: "MB (\"Mary Boyd\") Crosier is currently a student in Harvard's MS/MBA: Engineering Sciences program. MB writes a Substack newsletter called MCP in Context (https://www.mcpincontext.com) about all things related to the Model Context Protocol. Previously, she worked at marketing and operations roles at Stytch (a Series B developer tools startup focused on authentication APIs), as a management consultant focused on tech due diligences at Bain & Co, and was a strategy intern at Codecademy, focused on curriculum development and community building. Before that, she studied Systems and Information Engineering at UVA, as a  Jefferson Scholar. Outside of work, MB enjoys running, doing crosswords, traveling, and scuba diving. She also loves learning about local history, and has been a volunteer historical tour guide at the University of Virginia, on Boston's Freedom Trail, and at New York's Merchant House Museum. To learn more about MB, visit her personal website at https://www.mbcrosier.com." },
 				],
 			})
 		);
@@ -61,19 +61,36 @@ const landingPageHTML = `
 </head>
 <body>
     <h1>MB Crosier's Personal MCP Server</h1>
-    <p>This is a Model Context Protocol (MCP) server hosted on Cloudflare Workers, providing information about MB Crosier.</p>
-    <h2>Available Tools:</h2>
-    <ul>
-        <li><code>get_bio</code>: Returns a paragraph biography of MB Crosier.</li>
-        <li><code>get_contact_info</code>: Returns the contact email for MB Crosier (mbcrosier@gmail.com).</li>
-        <li><code>get_social_links</code>: Returns JSON with MB Crosier's Linkedin, Github, Instagram, and Twitter accounts.</li>
-    </ul>
-    <h2>Connecting Clients:</h2>
-    <p>You can connect to this server using MCP-compatible clients like Cloudflare AI Playground, Claude Desktop, or Cursor.</p>
-    <h3>Cloudflare AI Playground:</h3>
-    <p>Go to <a href="https://playground.ai.cloudflare.com/">https://playground.ai.cloudflare.com/</a> and enter this page's URL.</p>
-    <h3>Other Clients (Claude Desktop, Cursor):</h3>
-    <p>Use the <code>mcp-remote</code> proxy. Configure your client with command <code>npx</code> and arguments <code>mcp-remote</code> and your server URL ending in <code>/sse</code> (or <code>http://localhost:8787/sse</code> for local development).</p>
+	<p>This MCP server has been customized for <a href="https://www.mbcrosier.com" target="_blank">MB Crosier</a> and exposes the following tools:</p>
+			<ul>
+				<li><code>get_bio</code>: Returns a paragraph biography of MB Crosier.</li>
+				<li><code>get_contact_info</code>: Returns the contact email for MB Crosier (mbcrosier@gmail.com).</li>
+				<li><code>get_social_links</code>: Returns JSON with MB Crosier's Linkedin, Github, Instagram, and Twitter accounts.</li>
+			</ul>
+			<hr />
+			<h2>Try out this MCP Server using Cloudflare's AI Playground</h2>
+			<ol>
+				<li>Go to <a href="https://playground.ai.cloudflare.com/" target="_blank">Cloudflare AI Playground</a></li>
+				<li>Enter this MCP Server's deployed URL: <code>https://mb-crosier-mcp.mbcrosier.workers.dev/sse</code></li>
+				<li>You can now use MB's MCP server directly from the playground!</li>
+			</ol>
+			<h2>Connect this MCP Server to Claude Desktop</h2>
+			<p>To connect to this MCP server from Claude Desktop, follow <a href="https://modelcontextprotocol.io/quickstart/user" target="_blank">Anthropic's Quickstart</a> and within Claude Desktop go to <b>Settings &gt; Developer &gt; Edit Config</b>. Use this config:</p>
+			<pre style="background:#eee;padding:1em;border-radius:5px;overflow-x:auto;"><code>{
+			  "mcpServers": {
+    "mb-crosier-mcp": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mb-crosier-mcp.mbcrosier.workers.dev/sse" 
+      ]
+    }
+  }
+}
+</code></pre>
+			<footer>
+				&copy; ${new Date().getFullYear()} MB Crosier &mdash; <a href="https://www.mbcrosier.com" target="_blank">mbcrosier.com</a>
+			</footer>
 </body>
 </html>
 `;
