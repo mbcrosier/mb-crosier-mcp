@@ -95,28 +95,42 @@ function withCORSHeaders(resp: Response) {
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
+		const isMcpPath = url.pathname === "/sse" || url.pathname === "/sse/message";
 
-		// Handle CORS preflight (OPTIONS) for /sse and /sse/message
-		if ((url.pathname === "/sse" || url.pathname === "/sse/message") && request.method === "OPTIONS") {
-			return new Response(null, { status: 204, headers: CORS_HEADERS });
+		// Helper to always add CORS headers for MCP endpoints
+		function corsResponse(resp: Response) {
+			if (isMcpPath) return withCORSHeaders(resp);
+			return resp;
 		}
 
-		// Handle requests to the /sse path or /sse/message path for MCP communication
-		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
-			// Check if the request to /sse is likely from a browser expecting HTML
-			if (url.pathname === "/sse" && request.headers.get("Accept")?.includes("text/html")) {
-				// Serve the HTML landing page for browsers on /sse
-				return withCORSHeaders(new Response(landingPageHTML, { headers: { "Content-Type": "text/html" } }));
-			} else {
-				// Handle as an MCP request via SSE for clients on /sse or /sse/message
-				// This assumes MyMCP.serveSSE handles both GET for /sse and POST for /sse/message
-				const resp = await MyMCP.serveSSE("/sse").fetch(request, env, ctx);
-				return withCORSHeaders(resp);
+		try {
+			// Handle CORS preflight (OPTIONS) for /sse and /sse/message
+			if (isMcpPath && request.method === "OPTIONS") {
+				return corsResponse(new Response(null, { status: 204 }));
 			}
-		}
 
-		// Return 404 for any other path
-		return new Response("Not found", { status: 404 });
+			// Handle requests to the /sse path or /sse/message path for MCP communication
+			if (isMcpPath) {
+				// Check if the request to /sse is likely from a browser expecting HTML
+				if (url.pathname === "/sse" && request.headers.get("Accept")?.includes("text/html")) {
+					// Serve the HTML landing page for browsers on /sse
+					return corsResponse(new Response(landingPageHTML, { headers: { "Content-Type": "text/html" } }));
+				} else {
+					// Handle as an MCP request via SSE for clients on /sse or /sse/message
+					const resp = await MyMCP.serveSSE("/sse").fetch(request, env, ctx);
+					return corsResponse(resp);
+				}
+			}
+
+			// Return 404 for any other path
+			return new Response("Not found", { status: 404 });
+		} catch (err: any) {
+			// Always return CORS headers on error for MCP endpoints
+			if (isMcpPath) {
+				return corsResponse(new Response("Internal server error", { status: 500 }));
+			}
+			return new Response("Internal server error", { status: 500 });
+		}
 	},
 };
 
