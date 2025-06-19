@@ -56,7 +56,7 @@ const landingPageHTML = `
     <style>
         body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
         h1, h2 { color: #333; }
-        code { background-color: #f4f4f4; padding: 2px 5px; border-radius: 4px; }
+        code { background-color: transparent; padding: 2px 5px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -77,12 +77,12 @@ const landingPageHTML = `
 			<h2>Connect this MCP Server to Claude Desktop</h2>
 			<p>To connect to this MCP server from Claude Desktop, follow <a href="https://modelcontextprotocol.io/quickstart/user" target="_blank">Anthropic's Quickstart</a> and within Claude Desktop go to <b>Settings &gt; Developer &gt; Edit Config</b>. Use this config:</p>
 			<pre style="background:#eee;padding:1em;border-radius:5px;overflow-x:auto;"><code>{
-			  "mcpServers": {
+  "mcpServers": {
     "mb-crosier-mcp": {
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://mb-crosier-mcp.mbcrosier.workers.dev/sse" 
+        "https://mb-crosier-mcp.mbcrosier.workers.dev/sse"
       ]
     }
   }
