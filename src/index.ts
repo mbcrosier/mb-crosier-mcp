@@ -78,20 +78,40 @@ const landingPageHTML = `
 </html>
 `;
 
+// --- CORS helper ---
+const CORS_HEADERS = {
+	"Access-Control-Allow-Origin": "*",
+	"Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type,Authorization",
+};
+
+function withCORSHeaders(resp: Response) {
+	for (const [k, v] of Object.entries(CORS_HEADERS)) {
+		resp.headers.set(k, v);
+	}
+	return resp;
+}
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
+
+		// Handle CORS preflight (OPTIONS) for /sse and /sse/message
+		if ((url.pathname === "/sse" || url.pathname === "/sse/message") && request.method === "OPTIONS") {
+			return new Response(null, { status: 204, headers: CORS_HEADERS });
+		}
 
 		// Handle requests to the /sse path or /sse/message path for MCP communication
 		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
 			// Check if the request to /sse is likely from a browser expecting HTML
 			if (url.pathname === "/sse" && request.headers.get("Accept")?.includes("text/html")) {
 				// Serve the HTML landing page for browsers on /sse
-				return new Response(landingPageHTML, { headers: { "Content-Type": "text/html" } });
+				return withCORSHeaders(new Response(landingPageHTML, { headers: { "Content-Type": "text/html" } }));
 			} else {
 				// Handle as an MCP request via SSE for clients on /sse or /sse/message
 				// This assumes MyMCP.serveSSE handles both GET for /sse and POST for /sse/message
-				return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
+				const resp = await MyMCP.serveSSE("/sse").fetch(request, env, ctx);
+				return withCORSHeaders(resp);
 			}
 		}
 
