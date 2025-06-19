@@ -99,14 +99,18 @@ export default {
 
 		// Helper to always add CORS headers for MCP endpoints
 		function corsResponse(resp: Response) {
-			if (isMcpPath) return withCORSHeaders(resp);
+			if (isMcpPath) {
+				for (const [k, v] of Object.entries(CORS_HEADERS)) {
+					resp.headers.set(k, v);
+				}
+			}
 			return resp;
 		}
 
 		try {
-			// Handle CORS preflight (OPTIONS) for /sse and /sse/message
+			// IMMEDIATE: Handle CORS preflight (OPTIONS) for /sse and /sse/message
 			if (isMcpPath && request.method === "OPTIONS") {
-				return corsResponse(new Response(null, { status: 204 }));
+				return new Response(null, { status: 204, headers: CORS_HEADERS });
 			}
 
 			// Handle requests to the /sse path or /sse/message path for MCP communication
